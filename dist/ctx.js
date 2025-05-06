@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.setArguments = exports.loadContext = void 0;
 const tslib_1 = require("tslib");
 const path_1 = require("path");
-const yargs_1 = (0, tslib_1.__importDefault)(require("yargs"));
+const yargs_1 = tslib_1.__importDefault(require("yargs"));
 const helpers_1 = require("yargs/helpers");
 const project_1 = require("./project");
 async function loadContext(projectRootPath) {

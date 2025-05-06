@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.runProgram = exports.run = void 0;
 const tslib_1 = require("tslib");
 const commander_1 = require("commander");
-const c = (0, tslib_1.__importStar)(require("./colors"));
+const c = tslib_1.__importStar(require("./colors"));
 const ctx_1 = require("./ctx");
 const cli_1 = require("./util/cli");
 const log_1 = require("./util/log");
@@ -57,7 +57,7 @@ function runProgram(ctx) {
         */
         .action((0, cli_1.wrapAction)(async (args = {}) => {
         (0, ctx_1.setArguments)(ctx, args);
-        const { run } = await Promise.resolve().then(() => (0, tslib_1.__importStar)(require('./tasks/generate')));
+        const { run } = await Promise.resolve().then(() => tslib_1.__importStar(require('./tasks/generate')));
         await run(ctx);
     }));
     program.arguments('[command]').action(

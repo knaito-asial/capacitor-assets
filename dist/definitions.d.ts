@@ -113,7 +113,7 @@ export declare const enum IosIdiom {
     Watch = "watch",
     TV = "tv"
 }
-export declare type IosOutputAssetTemplateIcon = IosOutputAssetTemplate;
+export type IosOutputAssetTemplateIcon = IosOutputAssetTemplate;
 export interface IosOutputAssetTemplateSplash extends IosOutputAssetTemplate {
     orientation: Orientation;
     theme: Theme;

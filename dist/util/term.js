@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.isInteractive = exports.checkInteractive = void 0;
 const tslib_1 = require("tslib");
 const utils_terminal_1 = require("@ionic/utils-terminal");
-const colors_1 = (0, tslib_1.__importDefault)(require("../colors"));
+const colors_1 = tslib_1.__importDefault(require("../colors"));
 const log_1 = require("./log");
 // Given input variables to a command, make sure all are provided if the terminal
 // is not interactive (because we won't be able to prompt the user)

@@ -3,10 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PwaAssetGenerator = exports.PWA_ASSET_PATH = void 0;
 const tslib_1 = require("tslib");
 const utils_fs_1 = require("@ionic/utils-fs");
-const node_fetch_1 = (0, tslib_1.__importDefault)(require("node-fetch"));
-const node_html_parser_1 = (0, tslib_1.__importDefault)(require("node-html-parser"));
+const node_fetch_1 = tslib_1.__importDefault(require("node-fetch"));
+const node_html_parser_1 = tslib_1.__importDefault(require("node-html-parser"));
 const path_1 = require("path");
-const sharp_1 = (0, tslib_1.__importDefault)(require("sharp"));
+const sharp_1 = tslib_1.__importDefault(require("sharp"));
 const asset_generator_1 = require("../../asset-generator");
 const error_1 = require("../../error");
 const output_asset_1 = require("../../output-asset");
@@ -55,20 +55,20 @@ class PwaAssetGenerator extends asset_generator_1.AssetGenerator {
         if (!pwaDir) {
             throw new error_1.BadProjectError('No web app (PWA) found');
         }
-        if (asset.platform !== "any" /* Any */) {
+        if (asset.platform !== "any" /* Platform.Any */) {
             return [];
         }
         switch (asset.kind) {
-            case "logo" /* Logo */:
-            case "logo-dark" /* LogoDark */:
+            case "logo" /* AssetKind.Logo */:
+            case "logo-dark" /* AssetKind.LogoDark */:
                 return this.generateFromLogo(asset, project);
-            case "icon" /* Icon */:
+            case "icon" /* AssetKind.Icon */:
                 return this.generateIcons(asset, project);
             // eslint-disable-next-line no-duplicate-case
-            case "icon" /* Icon */:
+            case "icon" /* AssetKind.Icon */:
                 return [];
-            case "splash" /* Splash */:
-            case "splash-dark" /* SplashDark */:
+            case "splash" /* AssetKind.Splash */:
+            case "splash-dark" /* AssetKind.SplashDark */:
                 // PWA has no splashes
                 return this.generateSplashes(asset, project);
         }
@@ -109,7 +109,7 @@ class PwaAssetGenerator extends asset_generator_1.AssetGenerator {
         // is not exceeded (see Android splash generation)
         const targetLogoWidthPercent = (_b = this.options.logoSplashScale) !== null && _b !== void 0 ? _b : 0.2;
         const targetWidth = (_c = this.options.logoSplashTargetWidth) !== null && _c !== void 0 ? _c : Math.floor(width * targetLogoWidthPercent);
-        if (asset.kind === "logo" /* Logo */) {
+        if (asset.kind === "logo" /* AssetKind.Logo */) {
             // Generate light splash
             const lightDefaultBackground = '#ffffff';
             const lightDest = (0, path_1.join)(destDir, `apple-splash-${width}-${height}@${density}.png`);
@@ -128,10 +128,10 @@ class PwaAssetGenerator extends asset_generator_1.AssetGenerator {
                 .toFile(lightDest);
             const template = {
                 name: `apple-splash-${width}-${height}@${density}.png`,
-                platform: "pwa" /* Pwa */,
-                kind: "splash" /* Splash */,
-                format: "png" /* Png */,
-                orientation: "portrait" /* Portrait */,
+                platform: "pwa" /* Platform.Pwa */,
+                kind: "splash" /* AssetKind.Splash */,
+                format: "png" /* Format.Png */,
+                orientation: "portrait" /* Orientation.Portrait */,
                 density: density[0],
                 width,
                 height,
@@ -161,10 +161,10 @@ class PwaAssetGenerator extends asset_generator_1.AssetGenerator {
             .toFile(darkDest);
         const template = {
             name: `apple-splash-${width}-${height}@${density}-dark.png`,
-            platform: "pwa" /* Pwa */,
-            kind: "splash-dark" /* SplashDark */,
-            format: "png" /* Png */,
-            orientation: "portrait" /* Portrait */,
+            platform: "pwa" /* Platform.Pwa */,
+            kind: "splash-dark" /* AssetKind.SplashDark */,
+            format: "png" /* Format.Png */,
+            orientation: "portrait" /* Orientation.Portrait */,
             density: density[0],
             width,
             height,
@@ -184,7 +184,7 @@ class PwaAssetGenerator extends asset_generator_1.AssetGenerator {
             throw new error_1.BadPipelineError('Sharp instance not created');
         }
         const pwaDir = await this.getPWADirectory((_a = project.directory) !== null && _a !== void 0 ? _a : undefined);
-        const icons = Object.values(assets_1.ASSETS).filter((a) => a.kind === "icon" /* Icon */);
+        const icons = Object.values(assets_1.ASSETS).filter((a) => a.kind === "icon" /* AssetKind.Icon */);
         const generatedAssets = await Promise.all(icons.map(async (icon) => {
             const destDir = (0, path_1.join)(await this.getPWAAssetsDirectory(pwaDir), exports.PWA_ASSET_PATH);
             try {
@@ -260,7 +260,7 @@ class PwaAssetGenerator extends asset_generator_1.AssetGenerator {
         const pwaDir = await this.getPWADirectory((_a = project.directory) !== null && _a !== void 0 ? _a : undefined);
         const pwaAssetDir = await this.getPWAAssetsDirectory(pwaDir);
         const manifestPath = await this.getManifestJsonPath((_b = project.directory) !== null && _b !== void 0 ? _b : undefined);
-        const pwaAssets = assets.filter((a) => a.template.platform === "pwa" /* Pwa */);
+        const pwaAssets = assets.filter((a) => a.template.platform === "pwa" /* Platform.Pwa */);
         let manifestJson = {};
         if (await (0, utils_fs_1.pathExists)(manifestPath)) {
             manifestJson = await (0, utils_fs_1.readJSON)(manifestPath);
@@ -313,7 +313,7 @@ class PwaAssetGenerator extends asset_generator_1.AssetGenerator {
             type,
             sizes: `${asset.width}x${asset.height}`,
         };
-        if (asset.kind === "icon" /* Icon */) {
+        if (asset.kind === "icon" /* AssetKind.Icon */) {
             entry.purpose = 'any maskable';
         }
         return entry;
@@ -333,7 +333,7 @@ class PwaAssetGenerator extends asset_generator_1.AssetGenerator {
         const width = parseFloat(sizeParts[0]);
         const height = parseFloat(sizeParts[1]);
         const density = parts[1];
-        const name = `apple-splash-${width}-${height}@${density}${asset.kind === "splash-dark" /* SplashDark */ ? '-dark' : ''}.png`;
+        const name = `apple-splash-${width}-${height}@${density}${asset.kind === "splash-dark" /* AssetKind.SplashDark */ ? '-dark' : ''}.png`;
         const pwaDir = await this.getPWADirectory((_a = project.directory) !== null && _a !== void 0 ? _a : undefined);
         const pwaAssetDir = await this.getPWAAssetsDirectory(pwaDir);
         const destDir = (0, path_1.join)(pwaAssetDir, exports.PWA_ASSET_PATH);
@@ -347,10 +347,10 @@ class PwaAssetGenerator extends asset_generator_1.AssetGenerator {
         const outputInfo = await pipe.resize(width, height).png().toFile(dest);
         const template = {
             name,
-            platform: "pwa" /* Pwa */,
-            kind: "splash" /* Splash */,
-            format: "png" /* Png */,
-            orientation: "portrait" /* Portrait */,
+            platform: "pwa" /* Platform.Pwa */,
+            kind: "splash" /* AssetKind.Splash */,
+            format: "png" /* Format.Png */,
+            orientation: "portrait" /* Orientation.Portrait */,
             density: density[0],
             width,
             height,
@@ -368,44 +368,44 @@ class PwaAssetGenerator extends asset_generator_1.AssetGenerator {
 
 Add the following tags to your index.html to support PWA icons:
 `);
-        const pwaAssets = generated.filter((g) => g.template.platform === "pwa" /* Pwa */);
-        const mainIcon = pwaAssets.find((g) => g.template.width == 512 && g.template.kind === "icon" /* Icon */);
+        const pwaAssets = generated.filter((g) => g.template.platform === "pwa" /* Platform.Pwa */);
+        const mainIcon = pwaAssets.find((g) => g.template.width == 512 && g.template.kind === "icon" /* AssetKind.Icon */);
         (0, log_1.log)(`<link rel="apple-touch-icon" href="${Object.values((_a = mainIcon === null || mainIcon === void 0 ? void 0 : mainIcon.destFilenames) !== null && _a !== void 0 ? _a : {})[0]}">`);
-        for (const g of pwaAssets.filter((a) => a.template.kind === "icon" /* Icon */)) {
+        for (const g of pwaAssets.filter((a) => a.template.kind === "icon" /* AssetKind.Icon */)) {
             const w = g.template.width;
             const h = g.template.height;
             const path = (_b = Object.values(g.destFilenames)[0]) !== null && _b !== void 0 ? _b : '';
             (0, log_1.log)(`<link rel="apple-touch-icon" sizes="${w}x${h}" href="${path}">`);
         }
-        for (const g of pwaAssets.filter((a) => a.template.kind === "splash" /* Splash */)) {
+        for (const g of pwaAssets.filter((a) => a.template.kind === "splash" /* AssetKind.Splash */)) {
             const template = g.template;
             const w = g.template.width;
             const h = g.template.height;
             const path = (_c = Object.values(g.destFilenames)[0]) !== null && _c !== void 0 ? _c : '';
-            (0, log_1.log)(`<link rel="apple-touch-startup-image" href="${path}" media="(device-width: ${w}px) and (device-height: ${h}px) and (-webkit-device-pixel-ratio: ${template.density}) and (orientation: ${"portrait" /* Portrait */})>`);
+            (0, log_1.log)(`<link rel="apple-touch-startup-image" href="${path}" media="(device-width: ${w}px) and (device-height: ${h}px) and (-webkit-device-pixel-ratio: ${template.density}) and (orientation: ${"portrait" /* Orientation.Portrait */})>`);
         }
-        for (const g of pwaAssets.filter((a) => a.template.kind === "splash" /* Splash */)) {
+        for (const g of pwaAssets.filter((a) => a.template.kind === "splash" /* AssetKind.Splash */)) {
             const template = g.template;
             const w = g.template.width;
             const h = g.template.height;
             const path = (_d = Object.values(g.destFilenames)[0]) !== null && _d !== void 0 ? _d : '';
-            (0, log_1.log)(`<link rel="apple-touch-startup-image" href="${path}" media="(device-width: ${h}px) and (device-height: ${w}px) and (-webkit-device-pixel-ratio: ${template.density}) and (orientation: ${"landscape" /* Landscape */})>`);
+            (0, log_1.log)(`<link rel="apple-touch-startup-image" href="${path}" media="(device-width: ${h}px) and (device-height: ${w}px) and (-webkit-device-pixel-ratio: ${template.density}) and (orientation: ${"landscape" /* Orientation.Landscape */})>`);
         }
-        for (const g of pwaAssets.filter((a) => a.template.kind === "splash-dark" /* SplashDark */)) {
+        for (const g of pwaAssets.filter((a) => a.template.kind === "splash-dark" /* AssetKind.SplashDark */)) {
             const template = g.template;
             const w = g.template.width;
             const h = g.template.height;
             const path = (_e = Object.values(g.destFilenames)[0]) !== null && _e !== void 0 ? _e : '';
-            (0, log_1.log)(`<link rel="apple-touch-startup-image" href="${path}" media="(prefers-color-scheme: dark) and (device-width: ${w}px) and (device-height: ${h}px) and (-webkit-device-pixel-ratio: ${template.density}) and (orientation: ${"portrait" /* Portrait */})>`);
+            (0, log_1.log)(`<link rel="apple-touch-startup-image" href="${path}" media="(prefers-color-scheme: dark) and (device-width: ${w}px) and (device-height: ${h}px) and (-webkit-device-pixel-ratio: ${template.density}) and (orientation: ${"portrait" /* Orientation.Portrait */})>`);
         }
-        for (const g of pwaAssets.filter((a) => a.template.kind === "splash-dark" /* SplashDark */)) {
+        for (const g of pwaAssets.filter((a) => a.template.kind === "splash-dark" /* AssetKind.SplashDark */)) {
             const template = g.template;
             const w = g.template.width;
             const h = g.template.height;
             const path = (_f = Object.values(g.destFilenames)[0]) !== null && _f !== void 0 ? _f : '';
-            (0, log_1.log)(`<link rel="apple-touch-startup-image" href="${path}" media="(prefers-color-scheme: dark) and (device-width: ${h}px) and (device-height: ${w}px) and (-webkit-device-pixel-ratio: ${template.density}) and (orientation: ${"landscape" /* Landscape */})>`);
+            (0, log_1.log)(`<link rel="apple-touch-startup-image" href="${path}" media="(prefers-color-scheme: dark) and (device-width: ${h}px) and (device-height: ${w}px) and (-webkit-device-pixel-ratio: ${template.density}) and (orientation: ${"landscape" /* Orientation.Landscape */})>`);
         }
-        console.log('Generated', pwaAssets.filter((a) => a.template.kind === "splash" /* Splash */).length, pwaAssets.filter((a) => a.template.kind === "splash-dark" /* SplashDark */).length);
+        console.log('Generated', pwaAssets.filter((a) => a.template.kind === "splash" /* AssetKind.Splash */).length, pwaAssets.filter((a) => a.template.kind === "splash-dark" /* AssetKind.SplashDark */).length);
         /*
         for (const g of pwaAssets.filter(a => a.template.kind === AssetKind.Splash)) {
           const w = g.template.width;

@@ -5,12 +5,12 @@ const tslib_1 = require("tslib");
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 const utils_fs_1 = require("@ionic/utils-fs");
 const path_1 = require("path");
-const sharp_1 = (0, tslib_1.__importDefault)(require("sharp"));
+const sharp_1 = tslib_1.__importDefault(require("sharp"));
 const asset_generator_1 = require("../../asset-generator");
 const error_1 = require("../../error");
 const output_asset_1 = require("../../output-asset");
 const log_1 = require("../../util/log");
-const AndroidAssetTemplates = (0, tslib_1.__importStar)(require("./assets"));
+const AndroidAssetTemplates = tslib_1.__importStar(require("./assets"));
 class AndroidAssetGenerator extends asset_generator_1.AssetGenerator {
     constructor(options = {}) {
         super(options);
@@ -21,21 +21,21 @@ class AndroidAssetGenerator extends asset_generator_1.AssetGenerator {
         if (!androidDir) {
             throw new error_1.BadProjectError('No android project found');
         }
-        if (asset.platform !== "any" /* Any */ && asset.platform !== "android" /* Android */) {
+        if (asset.platform !== "any" /* Platform.Any */ && asset.platform !== "android" /* Platform.Android */) {
             return [];
         }
         switch (asset.kind) {
-            case "logo" /* Logo */:
-            case "logo-dark" /* LogoDark */:
+            case "logo" /* AssetKind.Logo */:
+            case "logo-dark" /* AssetKind.LogoDark */:
                 return this.generateFromLogo(asset, project);
-            case "icon" /* Icon */:
+            case "icon" /* AssetKind.Icon */:
                 return this.generateLegacyIcon(asset, project);
-            case "icon-foreground" /* IconForeground */:
+            case "icon-foreground" /* AssetKind.IconForeground */:
                 return this.generateAdaptiveIconForeground(asset, project);
-            case "icon-background" /* IconBackground */:
+            case "icon-background" /* AssetKind.IconBackground */:
                 return this.generateAdaptiveIconBackground(asset, project);
-            case "splash" /* Splash */:
-            case "splash-dark" /* SplashDark */:
+            case "splash" /* AssetKind.Splash */:
+            case "splash-dark" /* AssetKind.SplashDark */:
                 return this.generateSplashes(asset, project);
         }
         return [];
@@ -54,11 +54,11 @@ class AndroidAssetGenerator extends asset_generator_1.AssetGenerator {
         // Generate adaptive icons
         const generatedAdaptiveIcons = await this._generateAdaptiveIconsFromLogo(project, asset, pipe);
         generated.push(...generatedAdaptiveIcons);
-        if (asset.kind === "logo" /* Logo */) {
+        if (asset.kind === "logo" /* AssetKind.Logo */) {
             // Generate legacy icons
             const generatedLegacyIcons = await this.generateLegacyIcon(asset, project);
             generated.push(...generatedLegacyIcons);
-            const splashes = Object.values(AndroidAssetTemplates).filter((a) => a.kind === "splash" /* Splash */);
+            const splashes = Object.values(AndroidAssetTemplates).filter((a) => a.kind === "splash" /* AssetKind.Splash */);
             const generatedSplashes = await Promise.all(splashes.map(async (splash) => {
                 var _a;
                 return this._generateSplashesFromLogo(project, asset, splash, pipe, (_a = this.options.splashBackgroundColor) !== null && _a !== void 0 ? _a : '#ffffff');
@@ -66,7 +66,7 @@ class AndroidAssetGenerator extends asset_generator_1.AssetGenerator {
             generated.push(...generatedSplashes);
         }
         // Generate dark splashes
-        const darkSplashes = Object.values(AndroidAssetTemplates).filter((a) => a.kind === "splash-dark" /* SplashDark */);
+        const darkSplashes = Object.values(AndroidAssetTemplates).filter((a) => a.kind === "splash-dark" /* AssetKind.SplashDark */);
         const generatedSplashes = await Promise.all(darkSplashes.map(async (splash) => {
             var _a;
             return this._generateSplashesFromLogo(project, asset, splash, pipe, (_a = this.options.splashBackgroundColorDark) !== null && _a !== void 0 ? _a : '#111111');
@@ -79,7 +79,7 @@ class AndroidAssetGenerator extends asset_generator_1.AssetGenerator {
         var _a, _b;
         // Current versions of Android don't appear to support night mode icons (13+ might?)
         // so, for now, we only generate light mode ones
-        if (asset.kind === "logo-dark" /* LogoDark */) {
+        if (asset.kind === "logo-dark" /* AssetKind.LogoDark */) {
             return [];
         }
         // Create the background pipeline for the generated icons
@@ -88,12 +88,12 @@ class AndroidAssetGenerator extends asset_generator_1.AssetGenerator {
                 width: asset.width,
                 height: asset.height,
                 channels: 4,
-                background: asset.kind === "logo" /* Logo */
+                background: asset.kind === "logo" /* AssetKind.Logo */
                     ? (_a = this.options.iconBackgroundColor) !== null && _a !== void 0 ? _a : '#ffffff'
                     : (_b = this.options.iconBackgroundColorDark) !== null && _b !== void 0 ? _b : '#111111',
             },
         });
-        const icons = Object.values(AndroidAssetTemplates).filter((a) => a.kind === "adaptive-icon" /* AdaptiveIcon */);
+        const icons = Object.values(AndroidAssetTemplates).filter((a) => a.kind === "adaptive-icon" /* AssetKind.AdaptiveIcon */);
         const backgroundImages = await Promise.all(icons.map(async (icon) => {
             return await this._generateAdaptiveIconBackground(project, asset, icon, backgroundPipe);
         }));
@@ -145,7 +145,7 @@ class AndroidAssetGenerator extends asset_generator_1.AssetGenerator {
         return splashOutput;
     }
     async generateLegacyIcon(asset, project) {
-        const icons = Object.values(AndroidAssetTemplates).filter((a) => a.kind === "icon" /* Icon */);
+        const icons = Object.values(AndroidAssetTemplates).filter((a) => a.kind === "icon" /* AssetKind.Icon */);
         const pipe = asset.pipeline();
         if (!pipe) {
             throw new error_1.BadPipelineError('Sharp instance not created');
@@ -202,7 +202,7 @@ class AndroidAssetGenerator extends asset_generator_1.AssetGenerator {
         return [destRound, outputInfo];
     }
     async generateAdaptiveIconForeground(asset, project) {
-        const icons = Object.values(AndroidAssetTemplates).filter((a) => a.kind === "icon" /* Icon */);
+        const icons = Object.values(AndroidAssetTemplates).filter((a) => a.kind === "icon" /* AssetKind.Icon */);
         const pipe = asset.pipeline();
         if (!pipe) {
             throw new error_1.BadPipelineError('Sharp instance not created');
@@ -250,7 +250,7 @@ class AndroidAssetGenerator extends asset_generator_1.AssetGenerator {
         });
     }
     async generateAdaptiveIconBackground(asset, project) {
-        const icons = Object.values(AndroidAssetTemplates).filter((a) => a.kind === "icon" /* Icon */);
+        const icons = Object.values(AndroidAssetTemplates).filter((a) => a.kind === "icon" /* AssetKind.Icon */);
         const pipe = asset.pipeline();
         if (!pipe) {
             throw new error_1.BadPipelineError('Sharp instance not created');
@@ -309,9 +309,9 @@ class AndroidAssetGenerator extends asset_generator_1.AssetGenerator {
         if (!pipe) {
             throw new error_1.BadPipelineError('Sharp instance not created');
         }
-        const splashes = (asset.kind === "splash" /* Splash */
-            ? Object.values(AndroidAssetTemplates).filter((a) => a.kind === "splash" /* Splash */)
-            : Object.values(AndroidAssetTemplates).filter((a) => a.kind === "splash-dark" /* SplashDark */));
+        const splashes = (asset.kind === "splash" /* AssetKind.Splash */
+            ? Object.values(AndroidAssetTemplates).filter((a) => a.kind === "splash" /* AssetKind.Splash */)
+            : Object.values(AndroidAssetTemplates).filter((a) => a.kind === "splash-dark" /* AssetKind.SplashDark */));
         const resPath = this.getResPath(project);
         const collected = await Promise.all(splashes.map(async (splash) => {
             const [dest, outputInfo] = await this.generateSplash(project, asset, splash, pipe);

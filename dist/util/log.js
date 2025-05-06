@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.fatal = exports.error = exports.warn = exports.log = exports.debug = exports.logger = exports.output = void 0;
 const tslib_1 = require("tslib");
 const cli_framework_output_1 = require("@ionic/cli-framework-output");
-const colors_1 = (0, tslib_1.__importDefault)(require("../colors"));
+const colors_1 = tslib_1.__importDefault(require("../colors"));
 const term_1 = require("./term");
 const options = {
     colors: colors_1.default,

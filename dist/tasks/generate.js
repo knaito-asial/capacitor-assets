@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = void 0;
 const tslib_1 = require("tslib");
-const c = (0, tslib_1.__importStar)(require("../colors"));
+const c = tslib_1.__importStar(require("../colors"));
 const android_1 = require("../platforms/android");
 const ios_1 = require("../platforms/ios");
 const pwa_1 = require("../platforms/pwa");
